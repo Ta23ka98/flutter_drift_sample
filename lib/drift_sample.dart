@@ -1,0 +1,59 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_drift_sample/%20src/drift/todos.dart';
+
+class DriftSample extends StatelessWidget {
+  const DriftSample({Key? key, required this.database}) : super(key: key);
+
+  final MyDatabase database;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: SafeArea(
+        child: Column(
+          children: [
+            Expanded(
+              child: StreamBuilder(
+                stream: database.watchEntries(),
+                builder:
+                    (BuildContext context, AsyncSnapshot<List<Todo>> snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(child: CircularProgressIndicator());
+                  }
+                  return ListView.builder(
+                      itemCount: snapshot.data!.length,
+                      itemBuilder: (context, index) {
+                        return TextButton(
+                            onPressed: () async {},
+                            child: Text(snapshot.data![index].content));
+                      });
+                },
+              ),
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: const [
+                Expanded(
+                    child: Padding(
+                  padding: EdgeInsets.all(8),
+                  child: ElevatedButton(
+                    onPressed: null,
+                    child: Text("add"),
+                  ),
+                )),
+                Expanded(
+                    child: Padding(
+                  padding: EdgeInsets.all(8),
+                  child: ElevatedButton(
+                    onPressed: null,
+                    child: Text("remove"),
+                  ),
+                )),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
