@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_drift_sample/%20src/drift/todos.dart';
 
 void main() {
+  final database = MyDatabase();
   runApp(const MyApp());
 }
 
