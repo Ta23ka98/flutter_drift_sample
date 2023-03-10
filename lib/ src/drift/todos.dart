@@ -26,6 +26,11 @@ class MyDatabase extends _$MyDatabase {
 
   //データベースの値を取得する
   Future<List<Todo>> get allTodoEntries => select(todos).get();
+
+  //データを追加する
+  Future<int> addTodo(String content) async {
+    return into(todos).insert(TodosCompanion(content: Value(content)));
+  }
 }
 
 LazyDatabase _openConnection() {

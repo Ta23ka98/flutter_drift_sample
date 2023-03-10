@@ -32,22 +32,22 @@ class DriftSample extends StatelessWidget {
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: const [
+              children: [
                 Expanded(
                     child: Padding(
-                  padding: EdgeInsets.all(8),
+                  padding: const EdgeInsets.all(8),
                   child: ElevatedButton(
-                    onPressed: null,
-                    child: Text("add"),
+                    onPressed: () async {
+                      await database.addTodo("test");
+                    },
+                    child: const Text("add"),
                   ),
                 )),
                 Expanded(
                     child: Padding(
-                  padding: EdgeInsets.all(8),
+                  padding: const EdgeInsets.all(8),
                   child: ElevatedButton(
-                    onPressed: null,
-                    child: Text("remove"),
-                  ),
+                      onPressed: () {}, child: const Text("remove")),
                 )),
               ],
             ),
