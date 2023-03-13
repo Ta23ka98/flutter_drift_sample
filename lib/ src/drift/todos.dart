@@ -31,6 +31,12 @@ class MyDatabase extends _$MyDatabase {
   Future<int> addTodo(String content) async {
     return into(todos).insert(TodosCompanion(content: Value(content)));
   }
+
+  //データを更新する
+  Future<int> updateTodo(Todo todo, String content) async {
+    return (update(todos)..where((tbl) => tbl.id.equals(todo.id)))
+        .write(TodosCompanion(content: Value(content)));
+  }
 }
 
 LazyDatabase _openConnection() {
