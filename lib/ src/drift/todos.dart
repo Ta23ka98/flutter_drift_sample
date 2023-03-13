@@ -37,6 +37,11 @@ class MyDatabase extends _$MyDatabase {
     return (update(todos)..where((tbl) => tbl.id.equals(todo.id)))
         .write(TodosCompanion(content: Value(content)));
   }
+
+  //データを削除する
+  Future<void> deleteTodo(Todo todo) {
+    return (delete(todos)..where((tbl) => tbl.id.equals(todo.id))).go();
+  }
 }
 
 LazyDatabase _openConnection() {
