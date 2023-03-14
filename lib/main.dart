@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_drift_sample/%20src/drift/todos.dart';
+import 'package:flutter_drift_sample/src/drift/todos.dart';
 import 'package:flutter_drift_sample/drift_sample.dart';
 
 void main() {
