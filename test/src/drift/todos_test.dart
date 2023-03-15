@@ -22,7 +22,7 @@ void main() {
     await database!.close();
   });
 
-  test('追加した癰疽の中身がtestになっているかテスト', () async {
+  test('追加した要素の中身がtestになっているかテスト', () async {
     final id = await database!.addTodo('test');
     //すべてのList<Todo>を取得する
     final todo = await database!.allTodoEntries;
@@ -48,6 +48,25 @@ void main() {
 
     //要素の数が増えているかテストする
     expect(after.length, 1);
+  });
+
+  test("要素が削除できているかテスト", () async {
+    final todos = await database!.allTodoEntries;
+    await database!.addTodo("test");
+
+    final before = await database!.allTodoEntries;
+
+    //要素を追加したため、要素の数が1つかテスト
+    expect(before.length, 1);
+
+    //要素を1つ削除する
+    await database!.deleteTodo(before[before.length - 1]);
+
+    //要素を削除後のリストを取得
+    final after = await database!.allTodoEntries;
+
+    //要素の数が0個かテスト
+    expect(after.length, 0);
   });
 }
 
