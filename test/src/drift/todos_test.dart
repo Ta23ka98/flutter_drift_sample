@@ -22,7 +22,7 @@ void main() {
     await database!.close();
   });
 
-  test('todo added', () async {
+  test('追加した癰疽の中身がtestになっているかテスト', () async {
     final id = await database!.addTodo('test');
     //すべてのList<Todo>を取得する
     final todo = await database!.allTodoEntries;
@@ -33,7 +33,7 @@ void main() {
     expect(todo.first.content, 'aaaaa');
   });
 
-  test("Add Todo test", () async {
+  test("要素の数が増えているかテスト", () async {
     //追加前のリストを用意
     final before = await database!.allTodoEntries;
 
