@@ -32,6 +32,23 @@ void main() {
     //todoの最初の要素のconntentが"content"であると予想する(失敗する想定)
     expect(todo.first.content, 'aaaaa');
   });
+
+  test("Add Todo test", () async {
+    //追加前のリストを用意
+    final before = await database!.allTodoEntries;
+
+    //要素の数が0個であるかテストする
+    expect(before.length, 0);
+
+    //リストに要素を1つ追加する
+    await database!.addTodo("test");
+
+    //追加後のリストを取得する
+    final after = await database!.allTodoEntries;
+
+    //要素の数が増えているかテストする
+    expect(after.length, 1);
+  });
 }
 
 class Todos extends Table {
