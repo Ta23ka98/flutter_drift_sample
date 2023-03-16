@@ -1,4 +1,4 @@
-import 'package:flutter_drift_sample/src/drift/todos.dart';
+import 'package:flutter_drift_sample/src/models/entities/database/todos.dart';
 import 'dart:io';
 
 import 'package:drift/drift.dart';
