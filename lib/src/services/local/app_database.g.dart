@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'todos.dart';
+part of 'app_database.dart';
 
 // ignore_for_file: type=lint
 class $TodosTable extends Todos with TableInfo<$TodosTable, Todo> {
@@ -172,9 +172,10 @@ class TodosCompanion extends UpdateCompanion<Todo> {
   }
 }
 
-abstract class _$MyDatabase extends GeneratedDatabase {
-  _$MyDatabase(QueryExecutor e) : super(e);
+abstract class _$AppDatabase extends GeneratedDatabase {
+  _$AppDatabase(QueryExecutor e) : super(e);
   late final $TodosTable todos = $TodosTable(this);
+  late final TodosDao todosDao = TodosDao(this as AppDatabase);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();

@@ -1,15 +1,22 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_drift_sample/src/models/entities/database/todos.dart';
-import 'package:flutter_drift_sample/drift_sample.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_drift_sample/src/services/local/app_database.dart';
+import 'package:flutter_drift_sample/src/repositories/local/local_repository_provider.dart';
+
+final databaseProvider = Provider<AppDatabase>((ref) {
+  final appDatabase = AppDatabase();
+  return appDatabase;
+});
+
+final localRepoProvider =
+    Provider((ref) => LocalRepositoryProvider(ref.watch(databaseProvider)));
 
 void main() {
-  final database = MyDatabase();
-  runApp(MyApp(database: database));
+  runApp(ProviderScope(child: MyApp()));
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key, required this.database});
-  final MyDatabase database;
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -18,7 +25,8 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: DriftSample(database: database),
+      home: Text(""),
+      //DriftSample(database: database),
     );
   }
 }
