@@ -17,14 +17,26 @@ class $TodosTable extends Todos with TableInfo<$TodosTable, Todo> {
       requiredDuringInsert: false,
       defaultConstraints:
           GeneratedColumn.constraintIsAlways('PRIMARY KEY AUTOINCREMENT'));
-  static const VerificationMeta _contentMeta =
-      const VerificationMeta('content');
+  static const VerificationMeta _titleMeta = const VerificationMeta('title');
   @override
-  late final GeneratedColumn<String> content = GeneratedColumn<String>(
-      'content', aliasedName, false,
+  late final GeneratedColumn<String> title = GeneratedColumn<String>(
+      'title', aliasedName, false,
       type: DriftSqlType.string, requiredDuringInsert: true);
+  static const VerificationMeta _isCompletedMeta =
+      const VerificationMeta('isCompleted');
   @override
-  List<GeneratedColumn> get $columns => [id, content];
+  late final GeneratedColumn<bool> isCompleted =
+      GeneratedColumn<bool>('is_completed', aliasedName, false,
+          type: DriftSqlType.bool,
+          requiredDuringInsert: false,
+          defaultConstraints: GeneratedColumn.constraintsDependsOnDialect({
+            SqlDialect.sqlite: 'CHECK ("is_completed" IN (0, 1))',
+            SqlDialect.mysql: '',
+            SqlDialect.postgres: '',
+          }),
+          defaultValue: const Constant(true));
+  @override
+  List<GeneratedColumn> get $columns => [id, title, isCompleted];
   @override
   String get aliasedName => _alias ?? 'todos';
   @override
@@ -37,11 +49,17 @@ class $TodosTable extends Todos with TableInfo<$TodosTable, Todo> {
     if (data.containsKey('id')) {
       context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
     }
-    if (data.containsKey('content')) {
-      context.handle(_contentMeta,
-          content.isAcceptableOrUnknown(data['content']!, _contentMeta));
+    if (data.containsKey('title')) {
+      context.handle(
+          _titleMeta, title.isAcceptableOrUnknown(data['title']!, _titleMeta));
     } else if (isInserting) {
-      context.missing(_contentMeta);
+      context.missing(_titleMeta);
+    }
+    if (data.containsKey('is_completed')) {
+      context.handle(
+          _isCompletedMeta,
+          isCompleted.isAcceptableOrUnknown(
+              data['is_completed']!, _isCompletedMeta));
     }
     return context;
   }
@@ -54,8 +72,10 @@ class $TodosTable extends Todos with TableInfo<$TodosTable, Todo> {
     return Todo(
       id: attachedDatabase.typeMapping
           .read(DriftSqlType.int, data['${effectivePrefix}id'])!,
-      content: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}content'])!,
+      title: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}title'])!,
+      isCompleted: attachedDatabase.typeMapping
+          .read(DriftSqlType.bool, data['${effectivePrefix}is_completed'])!,
     );
   }
 
@@ -67,20 +87,24 @@ class $TodosTable extends Todos with TableInfo<$TodosTable, Todo> {
 
 class Todo extends DataClass implements Insertable<Todo> {
   final int id;
-  final String content;
-  const Todo({required this.id, required this.content});
+  final String title;
+  final bool isCompleted;
+  const Todo(
+      {required this.id, required this.title, required this.isCompleted});
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
     map['id'] = Variable<int>(id);
-    map['content'] = Variable<String>(content);
+    map['title'] = Variable<String>(title);
+    map['is_completed'] = Variable<bool>(isCompleted);
     return map;
   }
 
   TodosCompanion toCompanion(bool nullToAbsent) {
     return TodosCompanion(
       id: Value(id),
-      content: Value(content),
+      title: Value(title),
+      isCompleted: Value(isCompleted),
     );
   }
 
@@ -89,7 +113,8 @@ class Todo extends DataClass implements Insertable<Todo> {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return Todo(
       id: serializer.fromJson<int>(json['id']),
-      content: serializer.fromJson<String>(json['content']),
+      title: serializer.fromJson<String>(json['title']),
+      isCompleted: serializer.fromJson<bool>(json['isCompleted']),
     );
   }
   @override
@@ -97,56 +122,69 @@ class Todo extends DataClass implements Insertable<Todo> {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
       'id': serializer.toJson<int>(id),
-      'content': serializer.toJson<String>(content),
+      'title': serializer.toJson<String>(title),
+      'isCompleted': serializer.toJson<bool>(isCompleted),
     };
   }
 
-  Todo copyWith({int? id, String? content}) => Todo(
+  Todo copyWith({int? id, String? title, bool? isCompleted}) => Todo(
         id: id ?? this.id,
-        content: content ?? this.content,
+        title: title ?? this.title,
+        isCompleted: isCompleted ?? this.isCompleted,
       );
   @override
   String toString() {
     return (StringBuffer('Todo(')
           ..write('id: $id, ')
-          ..write('content: $content')
+          ..write('title: $title, ')
+          ..write('isCompleted: $isCompleted')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode => Object.hash(id, content);
+  int get hashCode => Object.hash(id, title, isCompleted);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      (other is Todo && other.id == this.id && other.content == this.content);
+      (other is Todo &&
+          other.id == this.id &&
+          other.title == this.title &&
+          other.isCompleted == this.isCompleted);
 }
 
 class TodosCompanion extends UpdateCompanion<Todo> {
   final Value<int> id;
-  final Value<String> content;
+  final Value<String> title;
+  final Value<bool> isCompleted;
   const TodosCompanion({
     this.id = const Value.absent(),
-    this.content = const Value.absent(),
+    this.title = const Value.absent(),
+    this.isCompleted = const Value.absent(),
   });
   TodosCompanion.insert({
     this.id = const Value.absent(),
-    required String content,
-  }) : content = Value(content);
+    required String title,
+    this.isCompleted = const Value.absent(),
+  }) : title = Value(title);
   static Insertable<Todo> custom({
     Expression<int>? id,
-    Expression<String>? content,
+    Expression<String>? title,
+    Expression<bool>? isCompleted,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
-      if (content != null) 'content': content,
+      if (title != null) 'title': title,
+      if (isCompleted != null) 'is_completed': isCompleted,
     });
   }
 
-  TodosCompanion copyWith({Value<int>? id, Value<String>? content}) {
+  TodosCompanion copyWith(
+      {Value<int>? id, Value<String>? title, Value<bool>? isCompleted}) {
     return TodosCompanion(
       id: id ?? this.id,
-      content: content ?? this.content,
+      title: title ?? this.title,
+      isCompleted: isCompleted ?? this.isCompleted,
     );
   }
 
@@ -156,8 +194,11 @@ class TodosCompanion extends UpdateCompanion<Todo> {
     if (id.present) {
       map['id'] = Variable<int>(id.value);
     }
-    if (content.present) {
-      map['content'] = Variable<String>(content.value);
+    if (title.present) {
+      map['title'] = Variable<String>(title.value);
+    }
+    if (isCompleted.present) {
+      map['is_completed'] = Variable<bool>(isCompleted.value);
     }
     return map;
   }
@@ -166,7 +207,8 @@ class TodosCompanion extends UpdateCompanion<Todo> {
   String toString() {
     return (StringBuffer('TodosCompanion(')
           ..write('id: $id, ')
-          ..write('content: $content')
+          ..write('title: $title, ')
+          ..write('isCompleted: $isCompleted')
           ..write(')'))
         .toString();
   }

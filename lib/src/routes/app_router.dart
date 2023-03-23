@@ -1,6 +1,7 @@
 import 'package:drift_db_viewer/drift_db_viewer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_drift_sample/src/services/local/app_database.dart';
+import 'package:flutter_drift_sample/src/views/todo_list_page/todo_list_page.dart';
 
 import 'app_routes.dart';
 
@@ -8,7 +9,7 @@ class AppRouter {
   static Route<dynamic>? generateRoute(RouteSettings settings) {
     switch (settings.name) {
       case AppRoutes.home:
-        return _buildRoute(const TodoListPage());
+        return _buildRoute(const ToDoListPage());
 
       case AppRoutes.driftDbViewer:
         return _buildRoute(DriftDbViewer(settings.arguments as AppDatabase));

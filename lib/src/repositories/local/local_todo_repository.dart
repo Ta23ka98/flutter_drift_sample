@@ -28,7 +28,7 @@ class LocalTodoRepository {
   }
 
   //データを削除する
-  Future deleteById(int id) {
+  Future deleteTodoById(int id) {
     return todosDao.deleteById(id);
   }
 }
